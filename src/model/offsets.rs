@@ -6,7 +6,7 @@ pub struct Offsets {
 }
 
 impl Offsets {
-    fn init() -> Self {
+    pub fn init() -> Self {
         let mut map = HashMap::new();
         map.insert(0b001, vec![8, 16, 7, 9]);
         map.insert(0b010, vec![15, 17, 10, 6, -6, -10, -15, -17]);
@@ -19,13 +19,13 @@ impl Offsets {
         }
     }
 
-    fn get(&self, id: u8) -> &Vec<i8> {
+    pub fn get(&self, id: u8) -> &Vec<i8> {
         self.offs_coll
         .get(&id)
         .expect("Offsets.get() ex: no matching offset for id = {:b}")
     }
 
-    fn get_elegant(&self, _piece: Signature) -> &Vec<i8> {
+    pub fn get_elegant(&self, _piece: Signature) -> &Vec<i8> {
         match _piece {
             Signature::Pawn(_) => self.get(0b001),
             Signature::Knight(_) => self.get(0b010),
@@ -33,7 +33,6 @@ impl Offsets {
             Signature::Rook(_) => self.get(0b100),
             Signature::Queen(_) => self.get(0b101),
             Signature::King(_) => self.get(0b111),
-            _     => panic!("Piece.get_figure() ex: No such figure")
         }
     }
 }
