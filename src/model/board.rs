@@ -31,10 +31,10 @@ impl Board {
         }
     }
 
-    pub fn new_fen(_fen_rep: Option<String>, _rep: HashMap<u8, Piece>, _prev_rep: Option<HashMap<u8, Piece>>, 
-        _white_to_move: bool, _en_passant: Option<u8>, _halfmove_clock: u16, _fullmove_clock: u16, _castles: u8) 
+    pub fn new_fen(_fen_rep: Option<String>, _rep: HashMap<u8, Piece>, _prev_rep: Option<HashMap<u8, Piece>>,
+        _white_to_move: bool, _en_passant: Option<u8>, _halfmove_clock: u16, _fullmove_clock: u16, _castles: u8)
         -> Self {
-        
+
         Board {
             rep: _rep,
             prev_rep: _prev_rep,
@@ -47,8 +47,12 @@ impl Board {
         }
     }
 
-    pub fn get_current(&mut self) -> &mut HashMap<u8, Piece> {
+    pub fn get_current_mut(&mut self) -> &mut HashMap<u8, Piece> {
         &mut self.rep
+    }
+
+    pub fn get_current(&self) -> &HashMap<u8, Piece> {
+        &self.rep
     }
 
     pub fn get_prev(&mut self) -> &mut Option<HashMap<u8, Piece>> {
@@ -78,25 +82,25 @@ pub struct BoardBuilder {
 impl BoardBuilder {
     pub fn new() -> Self {
         BoardBuilder {
-            rep_f: None, 
-            prev_rep_f: None, 
-            fen_rep_f: None, 
-            white_to_move_f: None, 
-            en_passant_f: None, 
-            halfmove_clock_f: None, 
-            fullmove_clock_f: None, 
+            rep_f: None,
+            prev_rep_f: None,
+            fen_rep_f: None,
+            white_to_move_f: None,
+            en_passant_f: None,
+            halfmove_clock_f: None,
+            fullmove_clock_f: None,
             castles_f: None,
         }
-    
+
     }
 
     pub fn build(self) -> Board {
-        Board::new_fen(self.fen_rep_f.flatten(), 
-            self.rep_f.expect("BoardBuilder ex: None 'rep'"), 
-            self.prev_rep_f.flatten(), 
-            self.white_to_move_f.unwrap_or(true), 
-            self.en_passant_f.flatten(), 
-            self.halfmove_clock_f.unwrap_or(0), 
+        Board::new_fen(self.fen_rep_f.flatten(),
+            self.rep_f.expect("BoardBuilder ex: None 'rep'"),
+            self.prev_rep_f.flatten(),
+            self.white_to_move_f.unwrap_or(true),
+            self.en_passant_f.flatten(),
+            self.halfmove_clock_f.unwrap_or(0),
             self.fullmove_clock_f.unwrap_or(0),
             self.castles_f.unwrap_or(0)
         )

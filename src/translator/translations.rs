@@ -18,10 +18,15 @@ pub fn fen_to_memory(_fen: &str) -> Board {
 fn extract_rep(_rep: &str) -> HashMap<u8, Piece> {
     let mut board_itr: u8 = 56;
     let mut rep = HashMap::new();
-
     for current in _rep.chars() {
         if current == '/' {
-            board_itr -= (board_itr % 8) + 8 
+            board_itr -= board_itr % 8;
+            board_itr -= 16;
+            continue;
+        }
+        if current.is_numeric() {
+            board_itr += current.to_digit(10).expect("Incorrect FEN: Nan") as u8;
+            continue;
         }
 
         let mut _id = 0b10000;
@@ -47,7 +52,7 @@ fn extract_rep(_rep: &str) -> HashMap<u8, Piece> {
 fn extract_white_to_move(_fen: &str) -> bool {
     match _fen {
         "b" => true,
-         _  => false, 
+         _  => false,
     }
 }
 
@@ -59,6 +64,7 @@ fn extract_castles(_fen: &str) -> u8 {
             'Q' => castles +=  0b100,
             'k' => castles +=   0b10,
             'q' => castles +=    0b1,
+            '-' => castles +=    0b0,
              _  => panic!("Incorrect FEN: ex while extracting castles")
         }
     }

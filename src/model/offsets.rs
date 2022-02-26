@@ -22,7 +22,7 @@ impl Offsets {
     pub fn get(&self, id: u8) -> &Vec<i8> {
         self.offs_coll
         .get(&id)
-        .expect("Offsets.get() ex: no matching offset for id = {:b}")
+        .expect("Offsets.get() ex: no matching offset")
     }
 
     pub fn get_elegant(&self, _piece: Signature) -> &Vec<i8> {

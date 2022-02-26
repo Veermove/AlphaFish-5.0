@@ -1,3 +1,4 @@
+use std::fmt::{Display};
 
 // ID: XYZZZ
 // X - ALIVE STATE, Y - COLOR, Z - PIECE IDENTITY
@@ -59,11 +60,11 @@ impl Piece {
     }
 
     pub fn get_figure(&self) -> u8 {
-        self.id << 5
+        self.id & 0b00111
     }
 
     pub fn get_signature(&self) -> Signature {
-        match self.id << 5 {
+        match self.id & 0b00111 {
             0b001 => Signature::Pawn(if self.get_color_E() == Color::White { 'P' } else { 'p' }),
             0b010 => Signature::Knight(if self.get_color_E() == Color::White { 'N' } else { 'n' }),
             0b011 => Signature::Bishop(if self.get_color_E() == Color::White { 'B' } else { 'b' }),
