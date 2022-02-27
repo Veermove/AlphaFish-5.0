@@ -47,6 +47,10 @@ impl Piece {
         }
     }
 
+    pub fn get_id(&self) -> u8 {
+        self.id
+    }
+
     pub fn get_color_E(&self) -> Color {
         match self.id >> 3 {
             0b11 => Color::Black,

@@ -1,4 +1,4 @@
-pub use crate::translator::move_translations::calc_sqr;
+use crate::translator::move_translations::calc_sqr;
 
 pub struct Move {
     target_square: u8,
@@ -91,7 +91,7 @@ impl MoveBuilder {
         self
     }
 
-    pub fn f_current_row(mut self, current_r: Option<u8>) -> Self {
+    pub fn current_row(mut self, current_r: Option<u8>) -> Self {
         self.f_current_row = Some(current_r);
         self
     }

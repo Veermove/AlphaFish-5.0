@@ -52,7 +52,7 @@ pub fn parse(input: &str, input_from_white: bool) -> Result<Move, &str> {
     Ok(
         Move::to_builder()
             .target_square(square.unwrap())
-            .f_current_row(current_r)
+            .current_row(current_r)
             .current_col(current_c)
             .piece_id(piece.unwrap())
             .move_str(Some(input.to_string()))
@@ -95,4 +95,25 @@ pub fn calc_sqr(col: i8, row: i8) -> Option<u8> {
     } else {
         None
     }
+}
+
+pub fn calc_letters_elegant(sqr: u8) -> (char, u8) {
+    let column = (((sqr) % 8) + 97) as char;
+    let row = (sqr / 8) + 1;
+    (column, row)
+}
+
+pub fn calc_letters(sqr: u8) -> (u8, u8) {
+    let column = ((sqr) % 8) + 97;
+    let row = (sqr / 8) + 1;
+    (column, row)
+}
+
+pub fn calc_current(sqr: u8) -> (u8, u8) {
+    let (column, row) = calc_letters(sqr);
+    let mut row = row as i8;
+    row -= 1;
+    row = row << 3;
+    (column, row as u8)
+
 }
