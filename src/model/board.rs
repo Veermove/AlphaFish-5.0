@@ -55,6 +55,14 @@ impl Board {
         &self.rep
     }
 
+    pub fn get_fullmove_clock(&self) -> u16 {
+        self.fullmove_clock
+    }
+
+    pub fn get_halfmove_clock(&self) -> u16 {
+        self.halfmove_clock
+    }
+
     pub fn get_prev(&mut self) -> &mut Option<HashMap<u8, Piece>> {
         &mut self.prev_rep
     }

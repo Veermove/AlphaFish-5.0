@@ -1,4 +1,5 @@
 pub use crate::model::board::{Board, BoardBuilder, Piece, HashMap};
+pub use crate::translator::move_translations::cord_to_sqr;
 
 pub fn fen_to_memory(_fen: &str) -> Board {
     let fen_first_class = _fen.to_string().clone();
@@ -8,11 +9,20 @@ pub fn fen_to_memory(_fen: &str) -> Board {
         .expect("Translator ex: Incorrect FEN-String - missing board representation")))
     .white_to_move(extract_white_to_move(fen_iter.next().unwrap_or("w")))
     .castles(extract_castles(fen_iter.next().unwrap_or("")))
-    .en_passant(None)
+    .en_passant(extract_en_passant(fen_iter.next().unwrap_or("-")))
     .halfmove_clock(extract_move_clock(fen_iter.next().unwrap_or("0")))
     .fullmove_clock(extract_move_clock(fen_iter.next().unwrap_or("0")))
     .fen_rep(Some(_fen.to_string()))
     .build()
+}
+
+fn extract_en_passant(_given: &str) -> Option<u8> {
+    if _given == "-" {
+        None
+    } else {
+        let mut given_itr = _given.chars();
+        cord_to_sqr(given_itr.next().unwrap_or('Z'), given_itr.next().unwrap_or('Z'))
+    }
 }
 
 fn extract_rep(_rep: &str) -> HashMap<u8, Piece> {

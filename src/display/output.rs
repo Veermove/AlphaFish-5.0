@@ -32,7 +32,9 @@ pub fn show_board(board: &Board) {
         print!("{}\n", rim);
 
     }
-    print!("  a   b   c   d   e   f   g   h   \n\n")
+    print!("  a   b   c   d   e   f   g   h   \n\n");
+    print!("Full move clock: {}\n", board.get_fullmove_clock());
+    print!("Halfmove clock: {}\n\n", board.get_halfmove_clock());
 
 }
 
