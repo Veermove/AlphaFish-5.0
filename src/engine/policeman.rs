@@ -10,6 +10,9 @@ pub fn get_legal_moves(offsets: Offsets, board: &Board) -> Vec<Move> {
 fn get_pseudolegal_moves(offsets: Offsets, board: &Board) -> Vec<Move> {
     let sliding_moves = board.get_current()
     .values()
+    .filter(|piece| (piece.get_color() == 0b10 && board.get_white_to_move())
+        || (piece.get_color() != 0b10 && !board.get_white_to_move())
+    )
     .map(|piece| {
         if piece.get_figure() >= 3 || piece.get_figure() <= 5 {
             generate_sliding_moves(

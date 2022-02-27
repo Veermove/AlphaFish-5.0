@@ -1,5 +1,3 @@
-use std::fmt::{Display};
-
 // ID: XYZZZ
 // X - ALIVE STATE, Y - COLOR, Z - PIECE IDENTITY
 

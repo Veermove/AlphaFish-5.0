@@ -47,6 +47,10 @@ impl Board {
         }
     }
 
+    pub fn get_white_to_move(&self) -> bool {
+        self.white_to_move
+    }
+
     pub fn get_current_mut(&mut self) -> &mut HashMap<u8, Piece> {
         &mut self.rep
     }
