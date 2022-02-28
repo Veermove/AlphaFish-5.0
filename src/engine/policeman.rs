@@ -1,7 +1,7 @@
 use crate::model::board::{Board, HashMap, Piece};
 use crate::model::move_rep::{Move};
 use crate::model::offsets::Offsets;
-use crate::translator::move_translations::{calc_letters, calc_current};
+use crate::translator::move_translations::{calc_letters};
 
 pub fn get_legal_moves(offsets: Offsets, board: &Board) -> Vec<Move> {
     get_pseudolegal_moves(offsets, board)
@@ -15,11 +15,20 @@ fn get_pseudolegal_moves(offsets: Offsets, board: &Board) -> Vec<Move> {
         || (piece.get_color() != 0b10 && !board.get_white_to_move())
     })
     .map(|piece| {
+
         if piece.get_figure() >= 0b011 && piece.get_figure() <= 0b101 {
+            // BISHOP, ROOK, QUEEN
             generate_sliding_moves(offsets.get(piece.get_figure()), piece, board.get_current())
-        } else if piece.get_figure() == 0b010 || piece.get_figure() == 0b111 {
+        } else if piece.get_figure() == 0b010 {
+            // KNIGHT
             generate_king_knight_moves(offsets.get(piece.get_figure()), piece, board.get_current())
+        } else if piece.get_figure() == 0b111 {
+            // KING
+            let mut king_moves = generate_king_knight_moves(offsets.get(piece.get_figure()), piece, board.get_current());
+            king_moves.append(&mut generate_castles_moves(piece, board.get_current()));
+            king_moves
         } else {
+            // PAWN
             generate_pawn_moves(offsets.get(piece.get_figure()), piece, board.get_current(), board.get_en_passant())
         }
     })
@@ -35,7 +44,7 @@ fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &Hash
     let col_row = calc_letters(piece.get_pos());
     let col_row = (col_row.0 as i8, col_row.1 as i8);
     let mut off_itr = offset.iter();
-    
+
     { // EN PASSANT
         if en_passant.is_some() {
             pawn_moves.push(Move::to_builder()
@@ -49,7 +58,7 @@ fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &Hash
 
     { // MOVE TWO SPACES UP
         let (c_off, r_off, off) = off_itr.next().unwrap();
-        let (col, row, pos) = (col_row.0 + c_off, col_row.1 + r_off, (piece.get_pos() as i8) + off);
+        let (_, _, pos) = (col_row.0 + c_off, col_row.1 + r_off, (piece.get_pos() as i8) + off);
         if !piece.get_has_moved() {
             pawn_moves.push(Move::to_builder()
                 .piece_id(piece.get_id())
@@ -62,7 +71,7 @@ fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &Hash
 
     { // MOVE ONE SPACE UP
         let (c_off, r_off, off) = off_itr.next().unwrap();
-        let (col, row, pos) = (col_row.0 + c_off, col_row.1 + r_off, ((piece.get_pos() as i8) + off) as u8);
+        let (_, row, pos) = (col_row.0 + c_off, col_row.1 + r_off, ((piece.get_pos() as i8) + off) as u8);
         let mut valid_target_sqr = None;
 
         if other_p.contains_key(&pos) {
@@ -79,7 +88,7 @@ fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &Hash
                 .current_col(Some(col_row.0 as u8))
                 .current_row(Some(col_row.1 as u8))
                 .target_square(valid_target_sqr.unwrap())
-                .promotion(check_for_promotion(row, piece))
+                .special_move(check_for_promotion(row, piece))
                 .build());
         }
     };
@@ -101,10 +110,10 @@ fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &Hash
                     .current_col(Some(col_row.0 as u8))
                     .current_row(Some(col_row.1 as u8))
                     .target_square(pos)
-                    .promotion(check_for_promotion(row, piece))
+                    .special_move(check_for_promotion(row, piece))
                     .build());
             }
-            
+
         }
     };
     pawn_moves
@@ -158,7 +167,7 @@ fn generate_king_knight_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p
             .build());
 
     }
-    
+
     knight_moves
 }
 
@@ -195,4 +204,45 @@ fn generate_sliding_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &H
         };
     };
     generated_moves
+}
+
+fn generate_castles_moves(piece: &Piece, other_p: &HashMap<u8, Piece>) -> Vec<Move> {
+    let mut castles = Vec::new();
+    if piece.get_has_moved() {
+        return castles;
+    }
+
+    let (left_rook_s, right_rook_s): (u8, u8) = if piece.get_color() == 0b10 { (0, 7) } else { (56, 63) };
+    let (col, row) = calc_letters(piece.get_pos());
+    { // Castle left
+        let left_rook = other_p.get(&left_rook_s);
+        if left_rook.is_some() {
+            if !left_rook.unwrap().get_has_moved() {
+                castles.push(Move::to_builder()
+                    .piece_id(piece.get_id())
+                    .current_col(Some(col))
+                    .current_row(Some(row))
+                    .target_square(if piece.get_color() == 0b10 { 2 } else { 58 })
+                    .special_move(true)
+                    .build());
+            }
+        }
+    };
+
+    { // Castle right
+        let left_rook = other_p.get(&right_rook_s);
+        if left_rook.is_some() {
+            if !left_rook.unwrap().get_has_moved() {
+                castles.push(Move::to_builder()
+                    .piece_id(piece.get_id())
+                    .current_col(Some(col))
+                    .current_row(Some(row))
+                    .target_square(if piece.get_color() == 0b10 { 6 } else { 62 })
+                    .special_move(true)
+                    .build());
+            }
+        }
+    };
+
+    castles
 }

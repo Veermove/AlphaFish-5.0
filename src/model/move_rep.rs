@@ -6,7 +6,7 @@ pub struct Move {
     current_row: Option<u8>,
     piece_id: u8,
     move_str: Option<String>,
-    promotion: bool,
+    special_move: bool,
 }
 
 impl Move {
@@ -16,14 +16,14 @@ impl Move {
     }
 
     pub fn new_full(target: u8, current_c: Option<u8>, current_r: Option<u8>,
-        id: u8, ms: Option<String>, _promotion: bool) -> Move {
+        id: u8, ms: Option<String>, _special_move: bool) -> Move {
         Move {
             target_square: target,
             current_col: current_c,
             current_row: current_r,
             piece_id: id,
             move_str: ms,
-            promotion: _promotion,
+            special_move: _special_move,
         }
     }
 
@@ -65,7 +65,7 @@ pub struct MoveBuilder {
     f_current_row: Option<Option<u8>>,
     f_piece_id: Option<u8>,
     f_move_str: Option<Option<String>>,
-    f_promotion: Option<bool>,
+    f_special_move: Option<bool>,
 }
 
 impl MoveBuilder {
@@ -76,7 +76,7 @@ impl MoveBuilder {
             f_current_row: None,
             f_piece_id: None,
             f_move_str: None,
-            f_promotion: None,
+            f_special_move: None,
         }
     }
 
@@ -87,12 +87,12 @@ impl MoveBuilder {
             self.f_current_row.flatten(),
             self.f_piece_id.expect("MoveBuilder.build(): pieceId not provided"),
             self.f_move_str.flatten(),
-            self.f_promotion.unwrap_or(false)
+            self.f_special_move.unwrap_or(false)
         )
     }
 
-    pub fn promotion(mut self, promotion: bool) -> Self {
-        self.f_promotion = Some(promotion);
+    pub fn special_move(mut self, special_move: bool) -> Self {
+        self.f_special_move = Some(special_move);
         self
     }
 

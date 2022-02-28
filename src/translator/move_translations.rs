@@ -1,6 +1,14 @@
 use crate::model::move_rep::Move;
 
 pub fn parse(input: &str, input_from_white: bool) -> Result<Move, &str> {
+
+    { // Check castles
+        let castle_move = check_castles(input, input_from_white);
+        if castle_move.is_some() {
+            return castle_move.ok_or("");
+        }
+    };
+
     let mut pos_chars = input.chars().rev();
     pos_chars.next();
     let square = pos_chars.next()
@@ -97,6 +105,30 @@ pub fn calc_sqr(col: i8, row: i8) -> Option<u8> {
     }
 }
 
+fn check_castles(input: &str, white_to_play: bool) -> Option<Move> {
+    if input.contains("O-O-O") {
+        Some(Move::to_builder()
+            .target_square(if white_to_play { 2 } else { 58 } )
+            .current_row(None)
+            .current_col(None)
+            .piece_id(if white_to_play { 0b10111 } else { 0b11111 } )
+            .move_str(Some(input.to_string()))
+            .special_move(true)
+            .build())
+    } else if input.contains("O-O") {
+        Some(Move::to_builder()
+            .target_square(if white_to_play { 6 } else { 62 } )
+            .current_row(None)
+            .current_col(None)
+            .piece_id(if white_to_play { 0b10111 } else { 0b11111 } )
+            .move_str(Some(input.to_string()))
+            .special_move(true)
+            .build())
+    } else {
+        None
+    }
+}
+
 pub fn calc_letters_elegant(sqr: u8) -> (char, u8) {
     let column = (((sqr) % 8) + 97) as char;
     let row = (sqr / 8) + 1;
@@ -105,7 +137,7 @@ pub fn calc_letters_elegant(sqr: u8) -> (char, u8) {
 
 pub fn calc_letters(sqr: u8) -> (u8, u8) {
     let column = (sqr) % 8;
-    let row = (sqr / 8) + 1;
+    let row = (sqr >> 3) + 1;
     (column, row)
 }
 
