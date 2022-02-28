@@ -1,4 +1,4 @@
-use crate::translator::move_translations::calc_sqr;
+use crate::translator::move_translations::{calc_sqr, calc_letters_elegant};
 
 pub struct Move {
     target_square: u8,
@@ -6,6 +6,7 @@ pub struct Move {
     current_row: Option<u8>,
     piece_id: u8,
     move_str: Option<String>,
+    promotion: bool,
 }
 
 impl Move {
@@ -15,13 +16,14 @@ impl Move {
     }
 
     pub fn new_full(target: u8, current_c: Option<u8>, current_r: Option<u8>,
-        id: u8, ms: Option<String>) -> Move {
+        id: u8, ms: Option<String>, _promotion: bool) -> Move {
         Move {
             target_square: target,
             current_col: current_c,
             current_row: current_r,
             piece_id: id,
             move_str: ms,
+            promotion: _promotion,
         }
     }
 
@@ -34,6 +36,11 @@ impl Move {
             .as_ref()
             .map(|m| m.as_str())
             .unwrap_or("")
+    }
+
+    pub fn to_str(&self) -> String {
+        let (c, r) = calc_letters_elegant(self.target_square);
+        format!("Move by {:b}, to square {}{}; = {}; {}", self.piece_id, c, r, self.target_square, self.get_str())
     }
 
     pub fn get_current_sqr(&self) -> Option<u8> {
@@ -58,6 +65,7 @@ pub struct MoveBuilder {
     f_current_row: Option<Option<u8>>,
     f_piece_id: Option<u8>,
     f_move_str: Option<Option<String>>,
+    f_promotion: Option<bool>,
 }
 
 impl MoveBuilder {
@@ -68,6 +76,7 @@ impl MoveBuilder {
             f_current_row: None,
             f_piece_id: None,
             f_move_str: None,
+            f_promotion: None,
         }
     }
 
@@ -78,7 +87,13 @@ impl MoveBuilder {
             self.f_current_row.flatten(),
             self.f_piece_id.expect("MoveBuilder.build(): pieceId not provided"),
             self.f_move_str.flatten(),
+            self.f_promotion.unwrap_or(false)
         )
+    }
+
+    pub fn promotion(mut self, promotion: bool) -> Self {
+        self.f_promotion = Some(promotion);
+        self
     }
 
     pub fn target_square(mut self, target: u8) -> Self {

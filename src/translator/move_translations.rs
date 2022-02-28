@@ -5,7 +5,7 @@ pub fn parse(input: &str, input_from_white: bool) -> Result<Move, &str> {
     pos_chars.next();
     let square = pos_chars.next()
         .zip(pos_chars.next())
-        .map(|(p_ver, p_hor)| cord_to_sqr(p_ver, p_hor))
+        .map(|(p_ver, p_hor)| cord_to_sqr(p_hor, p_ver))
         .flatten();
 
     let mut piece: Option<char> = None;
@@ -78,7 +78,7 @@ pub fn calc_piece_sign_from_letter(letter: Option<char>, input_from_white: bool)
     }
 }
 
-pub fn cord_to_sqr(p_ver: char, p_hor: char) -> Option<u8> {
+pub fn cord_to_sqr(p_hor: char, p_ver: char) -> Option<u8> {
     if !p_ver.is_numeric() || !p_hor.is_lowercase() {
         return None;
     }
@@ -104,7 +104,7 @@ pub fn calc_letters_elegant(sqr: u8) -> (char, u8) {
 }
 
 pub fn calc_letters(sqr: u8) -> (u8, u8) {
-    let column = ((sqr) % 8) + 97;
+    let column = (sqr) % 8;
     let row = (sqr / 8) + 1;
     (column, row)
 }

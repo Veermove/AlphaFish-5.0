@@ -47,6 +47,10 @@ impl Board {
         }
     }
 
+    pub fn get_en_passant(&self) -> Option<u8> {
+        self.en_passant
+    }
+
     pub fn get_white_to_move(&self) -> bool {
         self.white_to_move
     }

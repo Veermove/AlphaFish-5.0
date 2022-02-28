@@ -1,5 +1,6 @@
 pub use crate::model::board::{Board, BoardBuilder, Piece, HashMap};
 pub use crate::translator::move_translations::cord_to_sqr;
+use crate::model::offsets::OriginalSqrs;
 
 pub fn fen_to_memory(_fen: &str) -> Board {
     let fen_first_class = _fen.to_string().clone();
@@ -26,6 +27,7 @@ fn extract_en_passant(_given: &str) -> Option<u8> {
 }
 
 fn extract_rep(_rep: &str) -> HashMap<u8, Piece> {
+    let orig_sqrs = OriginalSqrs::init();
     let mut board_itr: u8 = 56;
     let mut rep = HashMap::new();
     for current in _rep.chars() {
@@ -53,7 +55,7 @@ fn extract_rep(_rep: &str) -> HashMap<u8, Piece> {
         if current.is_ascii_lowercase() {
             _id += 0b1000
         }
-        rep.insert(board_itr, Piece::new(_id, board_itr, false));
+        rep.insert(board_itr, Piece::new(_id, board_itr, orig_sqrs.get_by_sqr(board_itr) != _id));
         board_itr += 1;
     }
     rep
@@ -61,7 +63,7 @@ fn extract_rep(_rep: &str) -> HashMap<u8, Piece> {
 
 fn extract_white_to_move(_fen: &str) -> bool {
     match _fen {
-        "b" => true,
+        "w" => true,
          _  => false,
     }
 }

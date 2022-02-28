@@ -77,7 +77,7 @@ impl Piece {
         }
     }
 
-    pub fn get_moved(&self) -> bool {
+    pub fn get_has_moved(&self) -> bool {
         self.has_moved
     }
 
