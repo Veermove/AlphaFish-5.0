@@ -6,15 +6,15 @@ pub fn fen_to_memory(_fen: &str) -> Board {
     let fen_first_class = _fen.to_string().clone();
     let mut fen_iter = fen_first_class.split_whitespace();
     Board::to_builder()
-    .rep(extract_rep(fen_iter.next()
-        .expect("Translator ex: Incorrect FEN-String - missing board representation")))
-    .white_to_move(extract_white_to_move(fen_iter.next().unwrap_or("w")))
-    .castles(extract_castles(fen_iter.next().unwrap_or("")))
-    .en_passant(extract_en_passant(fen_iter.next().unwrap_or("-")))
-    .halfmove_clock(extract_move_clock(fen_iter.next().unwrap_or("0")))
-    .fullmove_clock(extract_move_clock(fen_iter.next().unwrap_or("0")))
-    .fen_rep(Some(_fen.to_string()))
-    .build()
+        .rep(extract_rep(fen_iter.next()
+            .expect("Translator ex: Incorrect FEN-String - missing board representation")))
+        .white_to_move(extract_white_to_move(fen_iter.next().unwrap_or("w")))
+        .castles(extract_castles(fen_iter.next().unwrap_or("-")))
+        .en_passant(extract_en_passant(fen_iter.next().unwrap_or("-")))
+        .halfmove_clock(extract_move_clock(fen_iter.next().unwrap_or("0")))
+        .fullmove_clock(extract_move_clock(fen_iter.next().unwrap_or("0")))
+        .fen_rep(Some(_fen.to_string()))
+        .build()
 }
 
 fn extract_en_passant(_given: &str) -> Option<u8> {

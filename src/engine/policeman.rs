@@ -1,4 +1,5 @@
-use crate::model::board::{Board, HashMap, Piece};
+use std::collections::{HashMap};
+use crate::model::board::{Board, Piece};
 use crate::model::move_rep::{Move};
 use crate::model::offsets::Offsets;
 use crate::translator::move_translations::{calc_letters};
@@ -39,7 +40,9 @@ fn get_pseudolegal_moves(offsets: Offsets, board: &Board) -> Vec<Move> {
     .unwrap()
 }
 
-fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &HashMap<u8, Piece>, en_passant: Option<u8>) -> Vec<Move> {
+fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece:
+    &Piece, other_p: &HashMap<u8, Piece>,
+    en_passant: Option<u8>) -> Vec<Move> {
     let mut pawn_moves = Vec::new();
     let col_row = calc_letters(piece.get_pos());
     let col_row = (col_row.0 as i8, col_row.1 as i8);
@@ -123,7 +126,7 @@ fn check_for_promotion(row: i8, piece: &Piece) -> bool {
      (row == 8 && piece.get_color() == 0b10 ) || (row == 1 && piece.get_color() == 0b11 )
 }
 
-fn check_bounds(col: i8, row: i8, pos: i8) -> bool {
+pub fn check_bounds(col: i8, row: i8, pos: i8) -> bool {
     if pos > 63 || pos < 0 {
         return false;
     }
@@ -215,8 +218,9 @@ fn generate_castles_moves(piece: &Piece, other_p: &HashMap<u8, Piece>) -> Vec<Mo
     let (left_rook_s, right_rook_s): (u8, u8) = if piece.get_color() == 0b10 { (0, 7) } else { (56, 63) };
     let (col, row) = calc_letters(piece.get_pos());
     { // Castle left
+        let (d_sqr, c_sqr) = if piece.get_color() == 0b10 { (2, 3) } else { (58, 59) };
         let left_rook = other_p.get(&left_rook_s);
-        if left_rook.is_some() {
+        if left_rook.is_some() && !other_p.contains_key(&d_sqr) && !other_p.contains_key(&c_sqr) {
             if !left_rook.unwrap().get_has_moved() {
                 castles.push(Move::to_builder()
                     .piece_id(piece.get_id())
@@ -230,9 +234,10 @@ fn generate_castles_moves(piece: &Piece, other_p: &HashMap<u8, Piece>) -> Vec<Mo
     };
 
     { // Castle right
-        let left_rook = other_p.get(&right_rook_s);
-        if left_rook.is_some() {
-            if !left_rook.unwrap().get_has_moved() {
+        let right_rook = other_p.get(&right_rook_s);
+        let (d_sqr, c_sqr) = if piece.get_color() == 0b10 { (5, 6) } else { (62, 61) };
+        if right_rook.is_some() {
+            if right_rook.is_some() && !other_p.contains_key(&d_sqr) && !other_p.contains_key(&c_sqr) {
                 castles.push(Move::to_builder()
                     .piece_id(piece.get_id())
                     .current_col(Some(col))

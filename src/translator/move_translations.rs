@@ -129,16 +129,20 @@ fn check_castles(input: &str, white_to_play: bool) -> Option<Move> {
     }
 }
 
+// given sqr index, translate to column and row
+// example: calc_letters_elegant(0) -> (a, 1)
+// assert_eq!(calc_letters_elegant(0), (a, 1));
 pub fn calc_letters_elegant(sqr: u8) -> (char, u8) {
-    let column = (((sqr) % 8) + 97) as char;
-    let row = (sqr / 8) + 1;
-    (column, row)
+    let (c, r) = calc_letters(sqr);
+    ((c + 97) as char, r)
 }
 
+// given sqr index, translate to column and row
+// example: calc_letters_elegant(0) -> (0, 1)
+// assert_eq!(calc_letters_elegant(0), (0, 1));
 pub fn calc_letters(sqr: u8) -> (u8, u8) {
-    let column = (sqr) % 8;
-    let row = (sqr >> 3) + 1;
-    (column, row)
+//  ( COLUMN      , ROW           )
+    ((sqr) & 0b111, (sqr >> 3) + 1)
 }
 
 pub fn calc_current(sqr: u8) -> (u8, u8) {
