@@ -1,6 +1,7 @@
-pub use crate::model::board::{Board, BoardBuilder, Piece, HashMap};
-pub use crate::translator::move_translations::cord_to_sqr;
+use std::collections::HashMap;
+use crate::translator::move_translations::cord_to_sqr;
 use crate::model::offsets::OriginalSqrs;
+use crate::model::board::{Board, Piece};
 
 pub fn fen_to_memory(_fen: &str) -> Board {
     let fen_first_class = _fen.to_string().clone();

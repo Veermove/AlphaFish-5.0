@@ -1,7 +1,7 @@
-pub use std::io;
-pub use crate::model::move_rep::Move;
-pub use crate::translator::move_translations::parse;
-pub use std::string::String;
+use std::string::String;
+use std::io;
+use crate::translator::move_translations::parse;
+use crate::model::move_rep::Move;
 
 pub fn input_from_usr(persist: bool, white_to_play: bool) -> Option<Move> {
     match persist {

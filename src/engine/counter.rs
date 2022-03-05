@@ -1,8 +1,8 @@
-use std::collections::{HashMap, HashSet};
 use std::collections::hash_set::IntoIter;
+use std::collections::{HashMap, HashSet};
+use crate::translator::move_translations::{calc_letters};
 use crate::model::piece::Piece;
 use crate::model::offsets::Offsets;
-use crate::translator::move_translations::{calc_letters};
 use crate::engine::policeman::check_bounds;
 
 pub fn get_attacked_sqrs(is_white: bool, pieces:&HashMap<u8,Piece>, offsets: Offsets) -> HashSet<u8> {

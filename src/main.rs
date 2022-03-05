@@ -1,15 +1,15 @@
-mod model;
 mod translator;
-mod display;
+mod model;
 mod engine;
+mod display;
 
+use translator::{fen_translations, move_translations};
 use model::piece::{Piece, Color, Signature};
 use model::offsets::Offsets;
 use model::move_rep::{Move};
-use translator::{fen_translations, move_translations};
-use display::{output, input_move};
 use engine::policeman;
 use engine::counter;
+use display::{output, input_move};
 
 
 fn main() {

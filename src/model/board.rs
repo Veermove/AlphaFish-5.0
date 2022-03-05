@@ -1,4 +1,4 @@
-pub use std::collections::HashMap;
+use std::collections::HashMap;
 pub use super::piece::{Piece};
 
 pub struct Board {

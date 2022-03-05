@@ -1,5 +1,6 @@
-pub use crate::model::board::{Board, Piece, HashMap};
-pub use crate::model::piece::{Signature, Color};
+use std::collections::HashMap;
+use crate::model::piece::{Color};
+use crate::model::board::{Board, Piece};
 
 pub fn show_board(board: &Board) {
 

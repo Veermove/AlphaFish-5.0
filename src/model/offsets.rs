@@ -1,5 +1,5 @@
+use super::piece::Signature;
 use std::collections::HashMap;
-pub use super::piece::Signature;
 
 pub struct OriginalSqrs {
     orig_pos: HashMap<u8, u8>
@@ -51,7 +51,7 @@ impl OriginalSqrs {
         .get(&sqr)
         .unwrap_or(&255)
     }
-    
+
 }
 
 pub struct Offsets {
