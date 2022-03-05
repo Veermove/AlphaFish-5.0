@@ -20,15 +20,15 @@ fn main() {
     let board = fen_translations::fen_to_memory(start_pos);
     output::show_board(&board);
 
-    // let given = input_move::input_from_usr(true, true).unwrap();
-    // let (a, b) = given.tup();
-    // println!("move was T: {}, id: {:b}", a, b);
-    // let moves = policeman::get_legal_moves(offsets, &board);
-    // for mo in moves {
-    //     println!("{}", mo.to_str().as_str());
-    // }
+    let given = input_move::input_from_usr(true, true).unwrap();
+    let (a, b) = given.tup();
+    println!("move was T: {}, id: {:b}", a, b);
+    let moves = policeman::get_legal_moves(&offsets, &board);
+    for mo in moves {
+        println!("{}", mo.to_str().as_str());
+    }
 
-    for sqr in counter::get_attacked_sqrs(false, board.get_current(), offsets) {
+    for sqr in counter::get_attacked_sqrs(false, board.get_current(), &offsets) {
         let (r, c) = move_translations::calc_letters_elegant(sqr);
         println!("{}{}", r, c);
     }

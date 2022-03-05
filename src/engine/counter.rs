@@ -5,7 +5,7 @@ use crate::model::piece::Piece;
 use crate::model::offsets::Offsets;
 use crate::engine::policeman::check_bounds;
 
-pub fn get_attacked_sqrs(is_white: bool, pieces:&HashMap<u8,Piece>, offsets: Offsets) -> HashSet<u8> {
+pub fn get_attacked_sqrs(is_white: bool, pieces:&HashMap<u8,Piece>, offsets: &Offsets) -> HashSet<u8> {
     pieces.values()
     .filter(|piece| {
         (piece.get_color() == 0b10 && is_white)
