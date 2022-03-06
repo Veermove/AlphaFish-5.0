@@ -1,22 +1,18 @@
+use std::vec::{IntoIter};
 use std::collections::{HashMap};
 use crate::translator::move_translations::{calc_letters};
 use crate::model::offsets::Offsets;
 use crate::model::move_rep::{Move};
 use crate::model::board::{Board, Piece};
 
-pub fn get_legal_moves(offsets: &Offsets, board: &Board) -> Vec<Move> {
-    get_pseudolegal_moves(offsets, board)
-}
-
-fn get_pseudolegal_moves(offsets: &Offsets, board: &Board) -> Vec<Move> {
+pub fn get_pseudolegal_moves(offsets: &Offsets, board: &Board) -> Vec<Move> {
     board.get_current()
     .values()
     .filter(|piece| {
         (piece.get_color() == 0b10 && board.get_white_to_move())
         || (piece.get_color() != 0b10 && !board.get_white_to_move())
     })
-    .map(|piece| {
-
+    .flat_map(|piece| {
         if piece.get_figure() >= 0b011 && piece.get_figure() <= 0b101 {
             // BISHOP, ROOK, QUEEN
             generate_sliding_moves(offsets.get(piece.get_figure()), piece, board.get_current())
@@ -25,24 +21,22 @@ fn get_pseudolegal_moves(offsets: &Offsets, board: &Board) -> Vec<Move> {
             generate_king_knight_moves(offsets.get(piece.get_figure()), piece, board.get_current())
         } else if piece.get_figure() == 0b111 {
             // KING
-            let mut king_moves = generate_king_knight_moves(offsets.get(piece.get_figure()), piece, board.get_current());
-            king_moves.append(&mut generate_castles_moves(piece, board.get_current()));
-            king_moves
+            let moves: Vec<Move> = vec![
+                generate_king_knight_moves(offsets.get(piece.get_figure()), piece, board.get_current()),
+                generate_castles_moves(piece, board.get_current())
+            ].into_iter().flatten().collect();
+            moves.into_iter()
         } else {
             // PAWN
             generate_pawn_moves(offsets.get(piece.get_figure()), piece, board.get_current(), board.get_en_passant())
         }
     })
-    .reduce(|mut accum, mut another| {
-        accum.append(&mut another);
-        return accum;
-    })
-    .unwrap()
+    .collect()
 }
 
-fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece:
-    &Piece, other_p: &HashMap<u8, Piece>,
-    en_passant: Option<u8>) -> Vec<Move> {
+fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece,
+    other_p: &HashMap<u8, Piece>, en_passant: Option<u8>) -> IntoIter<Move> {
+
     let mut pawn_moves = Vec::new();
     let col_row = calc_letters(piece.get_pos());
     let col_row = (col_row.0 as i8, col_row.1 as i8);
@@ -119,7 +113,7 @@ fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece:
 
         }
     };
-    pawn_moves
+    pawn_moves.into_iter()
 }
 
 fn check_for_promotion(row: i8, piece: &Piece) -> bool {
@@ -139,7 +133,7 @@ pub fn check_bounds(col: i8, row: i8, pos: i8) -> bool {
     true
 }
 
-fn generate_king_knight_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &HashMap<u8, Piece>) -> Vec<Move> {
+fn generate_king_knight_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &HashMap<u8, Piece>) -> IntoIter<Move> {
     let mut knight_moves = Vec::new();
     let col_row = calc_letters(piece.get_pos());
     let col_row = (col_row.0 as i8, col_row.1 as i8);
@@ -171,10 +165,10 @@ fn generate_king_knight_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p
 
     }
 
-    knight_moves
+    knight_moves.into_iter()
 }
 
-fn generate_sliding_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &HashMap<u8, Piece>) -> Vec<Move> {
+fn generate_sliding_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &HashMap<u8, Piece>) -> IntoIter<Move> {
     let mut generated_moves = Vec::new();
     let col_row = calc_letters(piece.get_pos());
     let col_row = (col_row.0 as i8, col_row.1 as i8);
@@ -206,13 +200,13 @@ fn generate_sliding_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &H
                 .build());
         };
     };
-    generated_moves
+    generated_moves.into_iter()
 }
 
-fn generate_castles_moves(piece: &Piece, other_p: &HashMap<u8, Piece>) -> Vec<Move> {
+fn generate_castles_moves(piece: &Piece, other_p: &HashMap<u8, Piece>) -> IntoIter<Move> {
     let mut castles = Vec::new();
     if piece.get_has_moved() {
-        return castles;
+        return castles.into_iter();
     }
 
     let (left_rook_s, right_rook_s): (u8, u8) = if piece.get_color() == 0b10 { (0, 7) } else { (56, 63) };
@@ -249,5 +243,5 @@ fn generate_castles_moves(piece: &Piece, other_p: &HashMap<u8, Piece>) -> Vec<Mo
         }
     };
 
-    castles
+    castles.into_iter()
 }

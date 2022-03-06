@@ -7,8 +7,7 @@ use translator::{fen_translations, move_translations};
 use model::piece::{Piece, Color, Signature};
 use model::offsets::Offsets;
 use model::move_rep::{Move};
-use engine::policeman;
-use engine::counter;
+use engine::{policeman, counter, finder};
 use display::{output, input_move};
 
 
@@ -23,13 +22,13 @@ fn main() {
     let given = input_move::input_from_usr(true, true).unwrap();
     let (a, b) = given.tup();
     println!("move was T: {}, id: {:b}", a, b);
-    let moves = policeman::get_legal_moves(&offsets, &board);
+    let moves = finder::get_legal_moves(&offsets, &board);
     for mo in moves {
         println!("{}", mo.to_str().as_str());
     }
 
-    for sqr in counter::get_attacked_sqrs(false, board.get_current(), &offsets) {
-        let (r, c) = move_translations::calc_letters_elegant(sqr);
-        println!("{}{}", r, c);
-    }
+    // for sqr in counter::get_attacked_sqrs(false, board.get_current(), &offsets) {
+    //     let (r, c) = move_translations::calc_letters_elegant(sqr);
+    //     println!("{}{}", r, c);
+    // }
 }
