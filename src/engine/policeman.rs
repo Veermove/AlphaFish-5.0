@@ -5,6 +5,10 @@ use crate::model::offsets::Offsets;
 use crate::model::move_rep::{Move};
 use crate::model::board::{Board, Piece};
 
+pub fn get_legal_moves(offsets: Offsets, board: &Board) -> Vec<Move> {
+    get_pseudolegal_moves(&offsets, board)
+}
+
 pub fn get_pseudolegal_moves(offsets: &Offsets, board: &Board) -> Vec<Move> {
     board.get_current()
     .values()
