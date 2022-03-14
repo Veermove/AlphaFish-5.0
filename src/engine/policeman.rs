@@ -1,7 +1,7 @@
 use crate::model::board::{Board, HashMap, Piece};
 use crate::model::move_rep::{Move};
 use crate::model::offsets::Offsets;
-use crate::translator::move_translations::{calc_letters, calc_current};
+use crate::translator::move_translations::{calc_letters};
 
 pub fn get_legal_moves(offsets: Offsets, board: &Board) -> Vec<Move> {
     get_pseudolegal_moves(offsets, board)
@@ -49,7 +49,7 @@ fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &Hash
 
     { // MOVE TWO SPACES UP
         let (c_off, r_off, off) = off_itr.next().unwrap();
-        let (col, row, pos) = (col_row.0 + c_off, col_row.1 + r_off, (piece.get_pos() as i8) + off);
+        let (_, _, pos) = (col_row.0 + c_off, col_row.1 + r_off, (piece.get_pos() as i8) + off);
         if !piece.get_has_moved() {
             pawn_moves.push(Move::to_builder()
                 .piece_id(piece.get_id())
@@ -62,7 +62,7 @@ fn generate_pawn_moves(offset: &Vec<(i8, i8, i8)>, piece: &Piece, other_p: &Hash
 
     { // MOVE ONE SPACE UP
         let (c_off, r_off, off) = off_itr.next().unwrap();
-        let (col, row, pos) = (col_row.0 + c_off, col_row.1 + r_off, ((piece.get_pos() as i8) + off) as u8);
+        let (_, row, pos) = (col_row.0 + c_off, col_row.1 + r_off, ((piece.get_pos() as i8) + off) as u8);
         let mut valid_target_sqr = None;
 
         if other_p.contains_key(&pos) {

@@ -12,7 +12,7 @@ pub fn input_from_usr(persist: bool, white_to_play: bool) -> Option<Move> {
 
 fn take_move_persist(white_to_play: bool) -> Move {
     let mut move_msg = if white_to_play {"White to play: \n"} else {"Black to play: \n"};
-    let fail_move_msg = "Illegal move: ".to_owned();
+    // let fail_move_msg = "Illegal move: ".to_owned();
     let mut fail: Option<String> = None;
     print!("\x1B7"); // save cursor pos
 

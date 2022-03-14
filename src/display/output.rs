@@ -22,7 +22,7 @@ pub fn show_board(board: &Board) {
     println!("{}", rim);
     for n in 0..8 {
         board_itr -= 16;
-        for m in 0..8 {
+        for _ in 0..8 {
             print!("{}", space);
             print!("{}", get_letter(&board_itr, board_ref));
             print!(" ");
